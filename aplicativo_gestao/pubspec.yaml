@@ -1,0 +1,37 @@
+name: budgit
+description: "Aplicativo de gestão financeira pessoal e familiar."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.13.5
+  cupertino_icons: ^1.0.8
+  fl_chart: ^0.64.0
+  provider: ^6.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  android_adaptive_icon: true
+  image_path_android: "assets/icon/budgit_icon.png"
+  adaptive_icon_background: "#FF5C00"
+  min_sdk_android: 21
+  ios: true
+  image_path_ios: "assets/icon/foreground.png"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icon/foreground.png
