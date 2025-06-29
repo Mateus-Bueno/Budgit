@@ -110,85 +110,147 @@ class _EvolucaoFinanceiraScreenState extends State<EvolucaoFinanceiraScreen> {
     setState(() => carregando = false);
   }
 
-  Widget _valorTexto(String label, String valor,
-      {Color? cor = Colors.black, double tamanho = 16, bool negrito = false}) {
-    return Text.rich(
-      TextSpan(
-        text: '$label ',
-        style: TextStyle(fontSize: tamanho),
-        children: [
-          TextSpan(
-            text: valor,
-            style: TextStyle(
-              fontWeight: negrito ? FontWeight.bold : FontWeight.normal,
-              color: cor ?? Colors.black,
-              fontSize: tamanho + 1,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
   Widget _blocoAnalise() {
     final variacao = totalAnterior > 0 ? ((totalAtual - totalAnterior) / totalAnterior) * 100 : null;
     final corVar = variacao != null
         ? (variacao >= 0 ? Colors.green[700] : Colors.red[700])
-        : null;
+        : Theme.of(context).textTheme.bodyMedium?.color;
     final sinal = variacao != null ? (variacao >= 0 ? '+' : '') : '';
-    final variacaoTexto =
-        variacao != null ? '$sinal${variacao.toStringAsFixed(1)}%' : 'sem comparação';
+    final variacaoTexto = variacao != null
+        ? '$sinal${variacao.toStringAsFixed(1)}%'
+        : 'sem comparação';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _valorTexto('Este mês você gastou um total de',
-            'R\$ ${totalAtual.toStringAsFixed(2)}', tamanho: 18, negrito: true),
-        SizedBox(height: 12),
-        _valorTexto('Variação em relação ao mês anterior:', variacaoTexto,
-            cor: corVar, tamanho: 16, negrito: true),
-        SizedBox(height: 16),
-        Text.rich(
-          TextSpan(
-            text: 'Maior categoria de gasto: ',
-            style: TextStyle(fontSize: 16),
-            children: [
-              TextSpan(
-                text: nomeCategoriaMaior,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+        AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                offset: Offset(0, 2),
               ),
-              TextSpan(
-                text: ' (R\$ ${valorCategoriaMaior.toStringAsFixed(2)})',
+            ],
+          ),
+          padding: EdgeInsets.all(16),
+          margin: EdgeInsets.only(bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Total gasto neste mês',
+                  style: Theme.of(context).textTheme.titleLarge),
+              SizedBox(height: 8),
+              Text(
+                'R\$ ${totalAtual.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red.shade600,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text('Variação mensal:',
+                  style: Theme.of(context).textTheme.bodyMedium),
+              Text(
+                variacaoTexto,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: corVar,
+                ),
               ),
             ],
           ),
         ),
-        if (categoriaMaiorAumento != null && crescimento != null) ...[
-          SizedBox(height: 12),
-          Text.rich(
-            TextSpan(
-              text: 'Categoria com maior aumento: ',
-              style: TextStyle(fontSize: 16),
-              children: [
-                TextSpan(
-                  text: categoriaMaiorAumento!,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                    color: Colors.deepOrange[700],
-                  ),
-                ),
-                TextSpan(
-                  text: ' (+${crescimento!.toStringAsFixed(1)}%)',
-                  style: TextStyle(color: Colors.deepOrange[700]),
-                ),
-              ],
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.3,
+          children: [
+            _infoCard(
+              title: 'Maior Gasto',
+              content: nomeCategoriaMaior,
+              subtitle: 'R\$ ${valorCategoriaMaior.toStringAsFixed(2)}',
             ),
+            _infoCard(
+              title: 'Maior Aumento',
+              content: categoriaMaiorAumento ?? 'N/A',
+              subtitle: crescimento != null
+                  ? '+${crescimento!.toStringAsFixed(1)}%'
+                  : 'sem dados',
+              subtitleColor: Colors.deepOrange[700],
+            ),
+            _infoCard(
+              title: 'Transações',
+              content: '$qtdTransacoes',
+              subtitle: 'neste mês',
+            ),
+            _infoCard(
+              title: 'Gasto mês anterior',
+              content: 'R\$ ${totalAnterior.toStringAsFixed(2)}',
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _infoCard({
+    required String title,
+    required String content,
+    String? subtitle,
+    Color? subtitleColor,
+  }) {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
         ],
-        SizedBox(height: 16),
-        _valorTexto('Transações realizadas neste mês:', '$qtdTransacoes'),
-      ],
+      ),
+      padding: EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(title, style: Theme.of(context).textTheme.bodyMedium),
+          SizedBox(height: 6),
+          Text(
+            content,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          if (subtitle != null) ...[
+            SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 14,
+                color: subtitleColor ?? Theme.of(context).textTheme.bodyMedium?.color,
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
