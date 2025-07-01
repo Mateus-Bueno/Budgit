@@ -4,7 +4,7 @@ import '../models/categoria.dart';
 import 'categoria_service.dart';
 
 class CategoriaServiceHttp implements CategoriaService {
-  final String baseUrl = 'http://localhost:8083/categories';
+  final String baseUrl = 'https://categorias-api-production.up.railway.app/categorias';
 
   @override
   Future<List<Categoria>> fetchCategorias() async {

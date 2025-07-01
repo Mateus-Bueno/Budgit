@@ -4,7 +4,7 @@ import '../models/usuario.dart';
 import 'usuario_service.dart';
 
 class UsuarioServiceHttp implements UsuarioService {
-  final String baseUrl = 'http://localhost:8080/usuarios';
+  final String baseUrl = 'https://usuarios-api-production-9dd3.up.railway.app/usuarios';
 
   @override
   Future<List<Usuario>> fetchUsuarios() async {

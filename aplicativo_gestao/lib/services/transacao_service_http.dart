@@ -4,7 +4,7 @@ import '../models/transacao.dart';
 import 'transacao_service.dart';
 
 class TransacaoServiceHttp implements TransacaoService {
-  final String baseUrl = 'http://localhost:8080/transacoes';
+  final String baseUrl = 'https://transacoes-api-production.up.railway.app/transacoes';
 
   @override
   Future<void> addTransacao(Transacao transacao) async {

@@ -13,7 +13,7 @@ import 'services/usuario_service_http.dart';
 enum Ambiente { mock, producao }
 
 class AppConfig {
-  static const Ambiente ambiente = Ambiente.mock;
+  static const Ambiente ambiente = Ambiente.producao;
 
   // Instâncias únicas (singleton)
   static final CategoriaService _categoriaService =
