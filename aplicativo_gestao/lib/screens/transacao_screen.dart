@@ -69,9 +69,15 @@ class _TransacaoScreenState extends State<TransacaoScreen> {
               itemCount: transacoes.length,
               itemBuilder: (_, index) {
                 final t = transacoes[index];
-                final dataFormatada = DateTime.tryParse(t.data) != null
-                    ? '${DateTime.parse(t.data).day.toString().padLeft(2, '0')}/${DateTime.parse(t.data).month.toString().padLeft(2, '0')}'
-                    : t.data;
+
+                String dataFormatada;
+                try {
+                  final data = DateTime.parse(t.data);
+                  dataFormatada =
+                      '${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}';
+                } catch (_) {
+                  dataFormatada = t.data;
+                }
 
                 return ListTile(
                   title: Text('R\$ ${t.valor.toStringAsFixed(2)}'),

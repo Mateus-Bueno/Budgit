@@ -30,7 +30,13 @@ class _TransacaoFormScreenState extends State<TransacaoFormScreen> {
     final t = widget.transacao;
     valor = t?.valor ?? 0.0;
     descricao = t?.descricao ?? '';
-    data = t != null ? DateTime.parse(t.data) : DateTime.now();
+
+    try {
+      data = t != null ? DateTime.parse(t.data) : DateTime.now();
+    } catch (_) {
+      data = DateTime.now();
+    }
+
     userId = t?.userId;
     categoriaId = t?.categoriaId;
 
@@ -43,9 +49,17 @@ class _TransacaoFormScreenState extends State<TransacaoFormScreen> {
     final categoriasCarregadas = await categoriaService.fetchCategorias();
     final usuariosCarregados = await usuarioService.fetchUsuarios();
 
+    final categoriasUnicas = {
+      for (var c in categoriasCarregadas) c.id: c
+    }.values.toList();
+
+    final usuariosUnicos = {
+      for (var u in usuariosCarregados) u.id: u
+    }.values.toList();
+
     setState(() {
-      categorias = categoriasCarregadas;
-      usuarios = usuariosCarregados;
+      categorias = categoriasUnicas;
+      usuarios = usuariosUnicos;
     });
   }
 
@@ -117,7 +131,7 @@ class _TransacaoFormScreenState extends State<TransacaoFormScreen> {
                       onTap: _selecionarData,
                     ),
                     DropdownButtonFormField<int>(
-                      value: categoriaId,
+                      value: categorias.any((c) => c.id == categoriaId) ? categoriaId : null,
                       decoration: InputDecoration(labelText: 'Categoria'),
                       items: categorias
                           .map((c) => DropdownMenuItem(value: c.id, child: Text(c.nome)))
@@ -126,7 +140,7 @@ class _TransacaoFormScreenState extends State<TransacaoFormScreen> {
                       validator: (v) => v == null ? 'Escolha uma categoria' : null,
                     ),
                     DropdownButtonFormField<int>(
-                      value: userId,
+                      value: usuarios.any((u) => u.id == userId) ? userId : null,
                       decoration: InputDecoration(labelText: 'Usuário'),
                       items: usuarios
                           .map((u) => DropdownMenuItem(value: u.id, child: Text(u.nome)))
